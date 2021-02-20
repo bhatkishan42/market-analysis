@@ -21,7 +21,7 @@ for dirname, _, filenames in os.walk('/kaggle/input'):
 ```
 
 * lets look into data first we'll read a file and get a gist of how data is presented
- ### Reading data
+### Reading data
 ```python
 data_path='../input/marketing-data/marketing_data.csv'
 df_d= pd.read_csv(data_path)
@@ -64,8 +64,8 @@ df.Income.isnull().sum()
 # 24 values are null
 # check for outliers using boxplot
 ```
-# %% [markdown]
-# ### Exploring data
+
+### Exploring data
 
 
 - From below figure we can see that most data is present between 0-1000
