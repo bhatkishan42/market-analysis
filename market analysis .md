@@ -201,7 +201,8 @@ sns.lmplot(x='NumWebVisitsMonth',y='NumDealsPurchases',data = df)
 
 
 # What factors are significantly related to the number of store purchases?
-
+* use a linear regression model with NumStorePurchases as the target variable & use machine learning models
+* plotting target variable
 ```python
 plt.figure(figsize=(8,3))
 sns.distplot(df['NumStorePurchases'], kde=True, hist=True, bins=12)
@@ -214,6 +215,9 @@ plt.ylabel('count');
 ```python
 type(df.Year_Birth[2])
 ```
+* Drop unwanted attributes such as id and customer 
+* We can also use pd.get_dummies 
+* We are not using label
 ```python
 df.drop(columns=['ID', 'Dt_Customer','Year_Birth'], inplace=True)
 ```
@@ -232,6 +236,8 @@ num = df.drop(columns =cat.columns)
 df2 = pd.concat([cat_encoded, num], axis=1)
 df2.head()
 ```
+* split the data set into traning(70%) and test(30%) data set
+* findings : Rmse is significantly smaller than median value indicating good model
 ```python
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -262,7 +268,7 @@ import eli5
 from eli5.sklearn import  PermutationImportance
 perm =PermutationImportance(model,random_state=1).fit(X_train,y_train)
 eli5.show_weights(perm,feature_names = X_test.columns.tolist(),top = 5)
-
+```
 
  #### Inference 
 * total purchase shows a positive trend compared to others 
@@ -272,7 +278,6 @@ so we can conclude that no of store purchases are not due to websites,catlogs,de
 
 ```python
 import shap
-
 # calculate shap values 
 ex = shap.Explainer(model, X_train)
 shap_values = ex(X_test)
