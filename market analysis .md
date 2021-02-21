@@ -288,29 +288,29 @@ shap.plots.beeswarm(shap_values, max_display=5);
 
 -Does US fare significantly better than the Rest of the World in terms of total purchases?
 
-# %% [code]
-country = df.groupby(['Country']).Total_purchases.sum().sort_values(ascending=False).plot(kind = 'bar')
+```python
+country = df.groupby(['Country']).Total_purchases.sum().sort_values(ascending=False).plot.bar
 plt.title('Country vs Purchases')
 plt.ylabel("purchases")
 country
+```
 
-# %% [markdown]
-# Fish has Omega 3 fatty acids which are good for the brain. Accordingly, do "Married PhD candidates" have a significant relation with amount spent on fish? What other factors are significantly related to amount spent on fish?
+ Fish has Omega 3 fatty acids which are good for the brain. Accordingly, do "Married PhD candidates" have a significant relation with amount spent on fish? What other factors are significantly related to amount spent on fish?
 
-# %% [code]
+```python
 df2['Married_PhD'] = df2['Marital_Status_Married']+df2['Education_PhD']
 df2['Married_PhD'] = df2['Married_PhD'].replace({2:'Married-PhD', 1:'Other', 0:'Other'})
-
-# %% [code]
+```
+```python
 sns.boxplot(x='Married_PhD',y='MntFishProducts',data =df2)
-
-# %% [code]
+```
+```python
 df2.drop(columns='Married_PhD', inplace=True)
+```
 
-# %% [markdown]
-# What other factors are significantly related to amount spent on fish?
+ What other factors are significantly related to amount spent on fish?
 
-# %% [code]
+```python
 X = df2.drop(columns = 'MntFishProducts')
 y= df2['MntFishProducts']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
@@ -325,41 +325,41 @@ preds = model.predict(X_test)
 # evaluate model using RMSE
 print("Linear regression model RMSE: ", np.sqrt(mean_squared_error(y_test, preds)))
 print("Median value of target variable: ", y.median())
+```
 
-# %% [markdown]
-# * TotalMnt', 'MntWines', 'MntMeatProducts', 'MntGoldProds', 'MntSweetProducts', 'MntFruits' are significat in weights compared to rest.
+ * TotalMnt', 'MntWines', 'MntMeatProducts', 'MntGoldProds', 'MntSweetProducts', 'MntFruits' are significat in weights compared to rest.
 
-# %% [code]
+```python
 cnc = PermutationImportance(model,random_state =1).fit(X_test,y_test)
 eli5.show_weights(cnc,feature_names = X_test.columns.tolist(), top=7)
-
-# %% [code]
+```
+```python
 #shap
 ex = shap.Explainer(model,X_train)
 shap_values = ex(X_test)
 plt.title('SHAP summary for MntFishProducts', size=16)
 shap.plots.beeswarm(shap_values, max_display=7);
+```
 
-# %% [markdown]
-# ### Infernce from above graph
-# * total_mnts is positive for fish products 
-# * where as fruits,meat,wines,sweets are in negative co-relation
-# 
-# #### to summarise
-# * the ones who are buying fish are spending less on other above mentioned products
+### Infernce from above graph
+* total_mnts is positive for fish products 
+* where as fruits,meat,wines,sweets are in negative co-relation
 
-# %% [code]
+#### To summarise
+ * the ones who are buying fish are spending less on Fruits,meat,wine,sweets,etc.
+
+```python
 # convert country codes to correct nomenclature for choropleth plot
 # the dataset doesn't provide information about country codes
 ## ...so I'm taking my best guess about the largest nations that make sense given the codes provided
 df['Country_code'] = df['Country'].replace({'SP': 'ESP', 'CA': 'CAN', 'US': 'USA', 'SA': 'ZAF', 'ME': 'MEX'})
 
-# success of campaigns by country code
+success of campaigns by country code
 df_cam = df[['Country_code', 'AcceptedCmp1', 'AcceptedCmp2', 'AcceptedCmp3', 'AcceptedCmp4', 'AcceptedCmp5', 'Response']].melt(
     id_vars='Country_code', var_name='Campaign', value_name='Accepted (%)')
 df_cam = pd.DataFrame(df_cam.groupby(['Country_code', 'Campaign'])['Accepted (%)'].mean()*100).reset_index(drop=False)
 
-# rename the campaign variables so they're easier to interpret
+ rename the campaign variables so they're easier to interpret
 df_cam['Campaign'] = df_cam['Campaign'].replace({'AcceptedCmp1': '1',
                                                 'AcceptedCmp2': '2',
                                                 'AcceptedCmp3': '3',
@@ -368,7 +368,7 @@ df_cam['Campaign'] = df_cam['Campaign'].replace({'AcceptedCmp1': '1',
                                                  'Response': 'Most recent'
                                                 })
 
-# choropleth plot
+choropleth plot
 import plotly.express as px
 
 fig = px.choropleth(df_cam, locationmode='ISO-3', color='Accepted (%)', facet_col='Campaign', facet_col_wrap=2,
@@ -376,7 +376,13 @@ fig = px.choropleth(df_cam, locationmode='ISO-3', color='Accepted (%)', facet_co
                     locations='Country_code', projection='natural earth', title='Advertising Campaign Success Rate by Country'
                    )
 fig.show()
+```
+### Section 03: Data Visualization
+Please plot and visualize the answers to the below questions.
 
+Which marketing campaign is most successful?
+Plot marketing campaign overall acceptance rates:
+Findings: The most successful campaign is the most recent (column name: Response)
 
 
 
